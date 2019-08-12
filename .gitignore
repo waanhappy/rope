@@ -1,0 +1,5 @@
+/node_modules
+/dist
+/lib
+.rpt2_cache
+.DS_Store

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "es2015",
+    "target": "es2018",
+    "noImplicitAny": true,
+    "noImplicitThis": false,
+    "sourceMap": true,
+    "lib": ["es7", "dom"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "jsx": "react",
+    "paths": {
+      "src": ["src"]
+    }
+  },
+  "exclude": ["node_modules"],
+  "include": ["src"]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "@webtanzhi/rope",
+  "version": "1.0.0",
+  "description": "A shell for react project ",
+  "main": "lib/index.cjs.js",
+  "module": "lib/index.esm.js",
+  "browser": "lib/index.umd.js",
+  "scripts": {
+    "build": "NODE_ENV=production rollup -c",
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://waanhappy@github.com/waanhappy/rope.git"
+  },
+  "keywords": [
+    "react",
+    "react-project"
+  ],
+  "author": "waanhappy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/waanhappy/rope/issues"
+  },
+  "homepage": "https://github.com/waanhappy/rope#readme",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@types/react": "^16.9.1",
+    "@types/react-dom": "^16.8.5",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.0.2",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-typescript2": "^0.22.1",
+    "rollup-plugin-uglify": "^6.0.2",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "rollup": "^1.19.4"
+  }
+}
