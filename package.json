@@ -35,9 +35,11 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-typescript2": "^0.22.1",
     "rollup-plugin-uglify": "^6.0.2",
+    "rollup": "^1.19.4",
     "typescript": "^3.5.3"
   },
-  "dependencies": {
-    "rollup": "^1.19.4"
+  "peerDependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   }
 }
