@@ -1,11 +1,15 @@
 import React from 'react';
 
-type Plugin = { id: number; props: any; component: React.ComponentType<any> };
-export type Updater = {
+interface Plugin {
+  id: number;
+  props: any;
+  component: React.ComponentType<any>;
+}
+export interface Updater {
   id: number;
   setState: (state: any) => Promise<void>;
   getState: (id: number) => any;
-};
+}
 
 interface WrapProps<T> {
   appProps: T;
@@ -15,17 +19,15 @@ interface WrapProps<T> {
 }
 
 export class Wrapper<T> extends React.PureComponent<WrapProps<T>, any> {
-  static id = 0;
+  public static id = 0;
 
-  id: number;
+  public id: number;
 
-  appProps: T;
-
-  constructor(props: WrapProps<T>) {
+  public constructor(props: WrapProps<T>) {
     super(props);
     this.id = Wrapper.id++;
     const pluginsPropsMap: { [key: number]: any } = {};
-    props.plugins.forEach(plugin => {
+    props.plugins.forEach((plugin) => {
       pluginsPropsMap[plugin.id] = plugin.props;
     });
     this.state = pluginsPropsMap;
@@ -35,7 +37,7 @@ export class Wrapper<T> extends React.PureComponent<WrapProps<T>, any> {
       setState: async (action: (state: T) => Promise<Partial<T>>) => {
         const id = this.id;
         const data = await action(this.state[id]);
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           this.setState({ [id]: data }, () => {
             resolve();
           });
@@ -44,16 +46,16 @@ export class Wrapper<T> extends React.PureComponent<WrapProps<T>, any> {
     });
   }
 
-  renderElement(plugins: Plugin[], index: number = 0): React.ReactComponentElement<any> {
+  public render() {
+    return this.renderElement(this.props.plugins);
+  }
+
+  private renderElement(plugins: Plugin[], index = 0): React.ReactComponentElement<any> {
     const plugin = plugins[index];
     if (plugin) {
       const { component, id } = plugin;
       return React.createElement(component, this.state[id], this.renderElement(plugins));
     }
     return React.createElement(this.props.App, this.props.appProps);
-  }
-
-  render() {
-    return this.renderElement(this.props.plugins);
   }
 }

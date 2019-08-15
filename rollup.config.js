@@ -40,7 +40,7 @@ export default [
     input: 'src/index.tsx',
     external: ['react', 'react-dom'],
     output: [
-      { file: pkg.main, format: 'cjs' }, // 转换给 node 使用
+      // { file: pkg.main, format: 'cjs' }, // 转换给 node 使用
       { file: pkg.module, format: 'es' }, // 转换给 webpack 使用
     ],
     plugins: [
@@ -50,6 +50,17 @@ export default [
       babel({
         exclude: '**/node_modules/**',
         extensions: ['.js', '.jsx', '.ts', '.tsx'], // 让babel能对ts解析过的代码编译
+      }),
+    ],
+  },
+  {
+    input: 'src/index.tsx',
+    external: ['react', 'react-dom'],
+    output: [{ file: pkg.main, format: 'cjs' }],
+    plugins: [
+      rollupTypescript({
+        noEmit: false,
+        target: 'es2015',
       }),
     ],
   },
