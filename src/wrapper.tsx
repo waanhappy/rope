@@ -12,8 +12,6 @@ export interface Updater {
 }
 
 interface WrapProps<T> {
-  appProps: T;
-  App: React.ComponentType<T>;
   plugins: { id: number; props: any; component: React.ComponentType<any> }[];
   setUpdater: (updater: Updater) => void;
 }
@@ -42,7 +40,7 @@ export class Wrapper<T> extends React.PureComponent<WrapProps<T>, any> {
             resolve();
           });
         });
-      }
+      },
     });
   }
 
@@ -50,12 +48,12 @@ export class Wrapper<T> extends React.PureComponent<WrapProps<T>, any> {
     return this.renderElement(this.props.plugins);
   }
 
-  private renderElement(plugins: Plugin[], index = 0): React.ReactComponentElement<any> {
+  private renderElement(plugins: Plugin[], index = 0): React.ReactNode {
     const plugin = plugins[index];
     if (plugin) {
       const { component, id } = plugin;
-      return React.createElement(component, this.state[id], this.renderElement(plugins));
+      return React.createElement(component, this.state[id], this.renderElement(plugins, index + 1));
     }
-    return React.createElement(this.props.App, this.props.appProps);
+    return this.props.children;
   }
 }

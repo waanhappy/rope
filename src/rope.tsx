@@ -16,9 +16,7 @@ export interface Plugin<T> {
  */
 export class Rope<T> {
   public static id = 0;
-  private App: React.ComponentType<T>;
-
-  private appProps: T;
+  private AppElement: React.ReactNode;
 
   // 加载中的 plugin
   private __pending: Promise<Plugin<any>>[] = [];
@@ -32,9 +30,8 @@ export class Rope<T> {
   // 更新状态
   private __updater: Updater = null;
 
-  public constructor(App: React.ComponentType<T>, appProps: any) {
-    this.App = App;
-    this.appProps = appProps;
+  public wrap(AppElement: React.ReactNode) {
+    this.AppElement = AppElement;
   }
 
   /**
@@ -132,6 +129,10 @@ export class Rope<T> {
   };
 
   private getComponent = () => {
-    return <Wrapper plugins={this.__plugins} App={this.App} appProps={this.appProps} setUpdater={this.__setUpdater} />;
+    return (
+      <Wrapper plugins={this.__plugins} setUpdater={this.__setUpdater}>
+        {this.AppElement}
+      </Wrapper>
+    );
   };
 }
