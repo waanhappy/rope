@@ -73,12 +73,12 @@ export class Rope<T> {
    * @param dom Selector<string> | DomObject | null
    * @param isomorphic 是否为同构渲染
    */
-  public async start(dom: HTMLElement | string, isomorphic: boolean) {
+  public async start(dom: HTMLElement | string, isomorphic: boolean= false) {
     const app = await this.render();
     if (!dom) {
       return this.getComponent;
     }
-    const htmlDom = typeof dom === 'string' ? document.getElementById(dom) : dom;
+    const htmlDom = typeof dom === 'string' ? document.querySelector(dom) : dom;
     if (isomorphic) {
       ReactDom.hydrate(app, htmlDom);
     } else {

@@ -20,13 +20,10 @@ export default [
       babel({
         exclude: '**/node_modules/**',
         extensions: ['.js', '.jsx', '.ts', '.tsx'], // 让babel能对ts解析过的代码编译
+        runtimeHelpers: true,
       }),
       commonjs(), // so Rollup can convert `ms` to an ES module
-      uglify({
-        output: {
-          comments: 'some',
-        },
-      }),
+      uglify({ output: { comments: 'some' } }),
     ],
   },
 
@@ -40,16 +37,17 @@ export default [
     input: 'src/index.tsx',
     external: ['react', 'react-dom'],
     output: [
-      // { file: pkg.main, format: 'cjs' }, // 转换给 node 使用
       { file: pkg.module, format: 'es' }, // 转换给 webpack 使用
     ],
     plugins: [
       rollupTypescript({
         noEmit: false,
       }),
+      commonjs(),
       babel({
         exclude: '**/node_modules/**',
         extensions: ['.js', '.jsx', '.ts', '.tsx'], // 让babel能对ts解析过的代码编译
+        runtimeHelpers: true,
       }),
     ],
   },
