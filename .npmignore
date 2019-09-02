@@ -3,3 +3,4 @@ node_modules
 .npmrc
 rollup.config.js
 src
+.rpt2_cache
