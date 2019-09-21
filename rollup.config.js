@@ -8,10 +8,10 @@ import { uglify } from 'rollup-plugin-uglify';
 export default [
   // browser-friendly UMD build
   {
-    input: 'src/index.tsx',
+    input: 'src/esm.tsx',
     output: {
       name: 'rope',
-      file: pkg.browser,
+      file: pkg.browser || 'umd/index.umd.js',
       format: 'umd',
     },
     plugins: [
@@ -34,7 +34,7 @@ export default [
   // an array for the `output` option, where we can specify
   // `file` and `format` for each target)
   {
-    input: 'src/index.tsx',
+    input: 'src/esm.tsx',
     external: ['react', 'react-dom'],
     output: [
       { file: pkg.module, format: 'es' }, // 转换给 webpack 使用

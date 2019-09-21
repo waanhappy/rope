@@ -9,7 +9,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const contentBase = __dirname;
+const contentBase = path.resolve(__dirname, '../../');
 
 function resolve(...paths) {
   return path.resolve(contentBase, ...paths);
@@ -23,7 +23,7 @@ const config = {
     app: resolve('demo/index.tsx'),
   },
   mode: 'development',
-  devtool: 'eval',
+  devtool: 'cheap-eval-source-map',
   output: {
     path: resolve('public'),
     publicPath: '',

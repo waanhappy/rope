@@ -16,14 +16,14 @@ interface WrapProps<T> {
   setUpdater: (updater: Updater) => void;
 }
 
-export class Wrapper<T> extends React.PureComponent<WrapProps<T>, any> {
+export class Core<T> extends React.PureComponent<WrapProps<T>, any> {
   public static id = 0;
 
   public id: number;
 
   public constructor(props: WrapProps<T>) {
     super(props);
-    this.id = Wrapper.id++;
+    this.id = Core.id++;
     const pluginsPropsMap: { [key: number]: any } = {};
     props.plugins.forEach((plugin) => {
       pluginsPropsMap[plugin.id] = plugin.props;
@@ -31,12 +31,11 @@ export class Wrapper<T> extends React.PureComponent<WrapProps<T>, any> {
     this.state = pluginsPropsMap;
     props.setUpdater({
       id: this.id,
-      getState: (id: number) => this.state,
-      setState: async (action: (state: T) => Promise<Partial<T>>) => {
+      getState: (id: number) => this.state[id],
+      setState: (state: Partial<T>) => {
         const id = this.id;
-        const data = await action(this.state[id]);
         return new Promise((resolve) => {
-          this.setState({ [id]: data }, () => {
+          this.setState({ [id]: state }, () => {
             resolve();
           });
         });

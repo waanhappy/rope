@@ -2,12 +2,11 @@
   "name": "@webtanzhi/rope",
   "version": "1.0.1",
   "description": "A shell for react project ",
-  "main": "lib/index.cjs.js",
-  "module": "lib/index.esm.js",
-  "browser": "lib/index.umd.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
   "scripts": {
     "build": "NODE_ENV=production rollup -c",
-    "test": "node ./webpack.js"
+    "test": "node ./demo/webpack/dev.js"
   },
   "repository": {
     "type": "git",

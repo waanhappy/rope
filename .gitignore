@@ -1,5 +1,7 @@
 /node_modules
 /dist
 /lib
+/es
+/umd
 .rpt2_cache
 .DS_Store
