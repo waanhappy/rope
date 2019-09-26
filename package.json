@@ -1,6 +1,6 @@
 {
   "name": "@webtanzhi/rope",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A shell for react project ",
   "main": "lib/index.js",
   "module": "es/index.js",

@@ -13,6 +13,11 @@ export default [
       name: 'rope',
       file: pkg.browser || 'umd/index.umd.js',
       format: 'umd',
+      banner: `/*!
+* Rope V${pkg.version}
+* written by Waanhappy/waanhappy@163.com
+* Released under the MIT License.
+*/`,
     },
     plugins: [
       resolve(), // so Rollup can find `react` and `react-dom`
@@ -37,7 +42,15 @@ export default [
     input: 'src/esm.tsx',
     external: ['react', 'react-dom'],
     output: [
-      { file: pkg.module, format: 'es' }, // 转换给 webpack 使用
+      {
+        file: pkg.module,
+        format: 'es',
+        banner: `/*!
+* Rope V${pkg.version}
+* written by Waanhappy/waanhappy@163.com
+* Released under the MIT License.
+*/`,
+      }, // 转换给 webpack 使用
     ],
     plugins: [
       rollupTypescript({
@@ -54,11 +67,22 @@ export default [
   {
     input: 'src/index.tsx',
     external: ['react', 'react-dom'],
-    output: [{ file: pkg.main, format: 'cjs' }],
+    output: [
+      {
+        file: pkg.main,
+        format: 'cjs',
+        banner: `/*!
+* Rope V${pkg.version}
+* written by Waanhappy/waanhappy@163.com
+* Released under the MIT License.
+*/`,
+      },
+    ],
     plugins: [
       rollupTypescript({
         noEmit: false,
         target: 'es2015',
+        removeComments: true,
       }),
     ],
   },
