@@ -15,7 +15,7 @@ export default [
       format: 'umd',
       banner: `/*!
 * Rope V${pkg.version}
-* written by Waanhappy/waanhappy@163.com
+* Written by Waanhappy/waanhappy@163.com
 * Released under the MIT License.
 */`,
     },

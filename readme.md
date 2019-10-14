@@ -57,3 +57,15 @@ DEMO
   }
 
 ```
+SSR support
+
+```
+// ssr
+export function renderDomString() {
+  ropeServer.app(<App />);
+  ropeServer.plugin(plugin({ name: '初始值' }));
+  ropeServer.renderToString();
+}
+// ropeServer
+  const ropeServer = new RopeServer();
+```
