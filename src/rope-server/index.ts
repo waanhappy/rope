@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderToString, renderToNodeStream, renderToStaticMarkup, renderToStaticNodeStream } from 'react-dom/server';
-import { Rope } from './index';
+import Rope from '../rope';
 
 export interface Plugin<T> {
   props: T;
@@ -13,7 +13,7 @@ export interface Plugin<T> {
  * 增加发布订阅机制以便处理数据变更
  * 用于动态切换一些不常用的值
  */
-export class RopeServer extends Rope {
+export default class RopeServer extends Rope {
   /**
    * 服务端渲染
    */

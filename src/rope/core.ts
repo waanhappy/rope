@@ -5,9 +5,10 @@ interface Plugin {
   props: any;
   component: React.ComponentType<any>;
 }
+
 export interface Updater {
   id: number;
-  setState: (state: any) => Promise<void>;
+  setState: (id: number, state: any) => Promise<void>;
   getState: (id: number) => any;
 }
 
@@ -16,7 +17,8 @@ interface WrapProps<T> {
   setUpdater: (updater: Updater) => void;
 }
 
-export class Core<T> extends React.PureComponent<WrapProps<T>, any> {
+// Provider 渲染器
+export class Core<T> extends React.Component<WrapProps<T>, any> {
   public static id = 0;
 
   public id: number;
@@ -25,16 +27,15 @@ export class Core<T> extends React.PureComponent<WrapProps<T>, any> {
     super(props);
     this.id = Core.id++;
     const pluginsPropsMap: { [key: number]: any } = {};
-    props.plugins.forEach((plugin) => {
+    props.plugins.forEach(plugin => {
       pluginsPropsMap[plugin.id] = plugin.props;
     });
     this.state = pluginsPropsMap;
     props.setUpdater({
       id: this.id,
       getState: (id: number) => this.state[id],
-      setState: (state: Partial<T>) => {
-        const id = this.id;
-        return new Promise((resolve) => {
+      setState: (id, state: Partial<T>) => {
+        return new Promise(resolve => {
           this.setState({ [id]: state }, () => {
             resolve();
           });

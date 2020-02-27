@@ -1,89 +1,77 @@
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
-import babel from 'rollup-plugin-babel';
-import rollupTypescript from 'rollup-plugin-typescript2';
-import pkg from './package.json';
-import { uglify } from 'rollup-plugin-uglify';
+/* eslint-disable @typescript-eslint/no-var-requires */
+const commonjs = require('rollup-plugin-commonjs');
+const rollupTypescript = require('rollup-plugin-typescript2');
+const autoExternal = require('rollup-plugin-auto-external');
+const resolve = require('rollup-plugin-node-resolve');
+const packageJson = require('./package.json');
+// const babel = require('rollup-plugin-babel');
 
-export default [
-  // browser-friendly UMD build
-  {
-    input: 'src/esm.tsx',
-    output: {
-      name: 'rope',
-      file: pkg.browser || 'umd/index.umd.js',
-      format: 'umd',
-      banner: `/*!
-* Rope V${pkg.version}
-* Written by Waanhappy/waanhappy@163.com
-* Released under the MIT License.
-*/`,
-    },
-    plugins: [
-      resolve(), // so Rollup can find `react` and `react-dom`
-      rollupTypescript(),
-      babel({
-        exclude: '**/node_modules/**',
-        extensions: ['.js', '.jsx', '.ts', '.tsx'], // 让babel能对ts解析过的代码编译
-        runtimeHelpers: true,
-      }),
-      commonjs(), // so Rollup can convert `ms` to an ES module
-      uglify({ output: { comments: 'some' } }),
-    ],
-  },
+const name = process.env.npm_package_name;
+const version = process.env.npm_package_version;
+// const moduleFile = packageJson.module;
+const mainFile = packageJson.main;
 
-  // CommonJS (for Node) and ES module (for bundlers) build.
-  // (We could have three entries in the configuration array
-  // instead of two, but it's quicker to generate multiple
-  // builds from a single configuration where possible, using
-  // an array for the `output` option, where we can specify
-  // `file` and `format` for each target)
+// 如果后期遇到
+// babel({
+//   exclude: '**/node_modules/**',
+//   extensions: ['.js', '.ts'], // 让babel能对ts解析过的代码编译
+//   runtimeHelpers: false,
+//   babelrc: false,
+//   presets: [['@babel/env', { targets: { node: '8.9.4' } }]],
+// }),
+// babel({
+//   exclude: '**/node_modules/**',
+//   extensions: ['.js', '.ts'], // 让babel能对ts解析过的代码编译
+//   runtimeHelpers: false,
+// }),
+module.exports = [
   {
-    input: 'src/esm.tsx',
-    external: ['react', 'react-dom'],
+    input: 'src/index.ts',
     output: [
+      // commonjs，给node用，仅需编译ts
       {
-        file: pkg.module,
-        format: 'es',
-        banner: `/*!
-* Rope V${pkg.version}
-* written by Waanhappy/waanhappy@163.com
-* Released under the MIT License.
-*/`,
-      }, // 转换给 webpack 使用
-    ],
-    plugins: [
-      rollupTypescript({
-        noEmit: false,
-      }),
-      commonjs(),
-      babel({
-        exclude: '**/node_modules/**',
-        extensions: ['.js', '.jsx', '.ts', '.tsx'], // 让babel能对ts解析过的代码编译
-        runtimeHelpers: true,
-      }),
-    ],
-  },
-  {
-    input: 'src/index.tsx',
-    external: ['react', 'react-dom'],
-    output: [
-      {
-        file: pkg.main,
+        file: mainFile,
         format: 'cjs',
         banner: `/*!
-* Rope V${pkg.version}
+* Rope V${version}
 * written by Waanhappy/waanhappy@163.com
 * Released under the MIT License.
 */`,
       },
     ],
+    external: ['react-dom/server'],
     plugins: [
+      autoExternal({ preferBuiltins: true, builtins: false, dependencies: true, peerDependencies: true }),
+      resolve({
+        extensions: [
+          '.node.mjs',
+          '.node.ts',
+          '.node.tsx',
+          '.node.js',
+          '.node.jsx',
+          '.node.json',
+          '.mjs',
+          '.ts',
+          '.tsx',
+          '.js',
+          '.jsx',
+          '.json',
+        ],
+      }),
       rollupTypescript({
         noEmit: false,
-        target: 'es2015',
         removeComments: true,
+        tsconfig: 'tsconfig.json',
+        clean: true,
       }),
+      commonjs(),
+      // babel({
+      //   exclude: '**/node_modules/**',
+      //   extensions: ['.js', '.ts', '.tsx', '.jsx'], // 让babel能对ts解析过的代码编译
+      //   runtimeHelpers: false,
+      //   babelrc: false,
+      //   presets: [['@babel/env', { targets: { node: '8.9.4' } }], '@babel/react'],
+      // }),
     ],
   },
 ];

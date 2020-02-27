@@ -1,7 +1,6 @@
 import React from 'react';
-import ReactDom from 'react-dom';
 import { Updater, Core } from './core';
-import { isPromise } from './is-promise';
+import { isPromise, isFunction } from '@webtanzhi/utils';
 
 type Handler<S> = (prevState: S, preload: any) => Partial<S>;
 
@@ -11,14 +10,23 @@ export interface Plugin<T, S> {
   subscribes: { [key: string]: Handler<S> };
 }
 
+export type FPluginOptions = <P, S>() =>
+  | (Plugin<P, S> | Promise<Plugin<P, S>>)[]
+  | Plugin<P, S>
+  | Promise<Plugin<P, S>>;
+export type OPluginOptions<P, S> = (Plugin<P, S> | Promise<Plugin<P, S>>)[] | Plugin<P, S> | Promise<Plugin<P, S>>;
+export type PluginOptions<P, S> = FPluginOptions | OPluginOptions<P, S>;
 /**
  * 主要提供middleware的支持，
  * 增加发布订阅机制以便处理数据变更
  * 用于动态切换一些不常用的值
  */
-export class Rope {
+export default class Rope {
   public static id = 0;
   private AppElement: React.ReactNode;
+
+  // 初始状态的pulgin
+  private __origin_plugins: FPluginOptions[] = [];
 
   // 加载中的 plugin
   private __pending: Promise<Plugin<any, any>>[] = [];
@@ -32,7 +40,7 @@ export class Rope {
   // 更新状态
   private __updater: Updater = null;
 
-  public app(AppElement: React.ReactNode) {
+  public useApp(AppElement: React.ReactNode) {
     this.AppElement = AppElement;
   }
 
@@ -43,7 +51,28 @@ export class Rope {
    *  subscribes: {[string]?(): => any},
    * }
    */
-  public plugin<P, S>(plugin: (Plugin<P, S> | Promise<Plugin<P, S>>)[] | Plugin<P, S> | Promise<Plugin<P, S>>) {
+  public plugin(plugin: PluginOptions<any, any>) {
+    if (isFunction(plugin)) {
+      this.__origin_plugins.push(plugin);
+      return this;
+    }
+    this.__origin_plugins.push(() => {
+      if (isPromise(plugin)) {
+        return plugin;
+      }
+      return plugin;
+    });
+    return this;
+  }
+
+  /**
+   * {
+   *  component,
+   *  props,
+   *  subscribes: {[string]?(): => any},
+   * }
+   */
+  public applyPlugin<P, S>(plugin: (Plugin<P, S> | Promise<Plugin<P, S>>)[] | Plugin<P, S> | Promise<Plugin<P, S>>) {
     if (Array.isArray(plugin)) {
       plugin.forEach((m) => {
         this.plugin(m);
@@ -65,37 +94,24 @@ export class Rope {
    */
   public async trigger(name: string, handler: <S>(prevState: S) => any) {
     const promises = this.__hooks.map(async (hook) => {
+      // 循环hooks找到对应的handler，处理数据
       const { id, handler: subscribesHandler, name: hookName } = hook;
       if (hookName === name) {
         const prevState = this.__updater.getState(id);
         const preload = await handler(prevState);
         const data = await subscribesHandler(prevState, preload);
-        await this.__updater.setState({ ...prevState, ...data });
+        await this.__updater.setState(id, { ...prevState, ...data });
       }
     });
     await Promise.all(promises);
   }
 
-  /**
-   * 挂载渲染或返回根组件
-   * @param dom Selector<string> | DomObject | null
-   * @param isomorphic 是否为同构渲染
-   */
-  public async start(dom: HTMLElement | string, isomorphic: boolean = false) {
-    const app = await this.render();
-    if (!dom) {
-      return this.getComponent;
-    }
-    const htmlDom = typeof dom === 'string' ? document.querySelector(dom) : dom;
-    if (isomorphic) {
-      ReactDom.hydrate(app, htmlDom);
-    } else {
-      ReactDom.render(app, htmlDom);
-    }
-  }
-
   // get the jsx
   public render() {
+    // plugin的异步不能提前执行
+    this.__origin_plugins.forEach((plugin) => {
+      this.applyPlugin(plugin());
+    });
     if (this.__plugins) {
       return Promise.resolve(this.getComponent());
     }
@@ -105,13 +121,8 @@ export class Rope {
         return this.getComponent();
       })
       .catch((error) => {
-        return (
-          <div>
-            <h3>{error.message}</h3>
-            <br />
-            {error.stack}
-          </div>
-        );
+        console.error(error);
+        return null;
       });
   }
 
@@ -137,11 +148,11 @@ export class Rope {
     this.__updater = updater;
   };
 
-  private getComponent = () => {
+  getComponent() {
     return (
       <Core plugins={this.__plugins} setUpdater={this.__setUpdater}>
         {this.AppElement}
       </Core>
     );
-  };
+  }
 }

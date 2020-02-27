@@ -9,7 +9,7 @@ DEMO
   rope.start('#root');
 
 // rope
-  const rope = new Rope();
+  const rope = new RopeWeb();
 
 // plugin
   const demoCtx = createContext({ name: '' });
