@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { getInitialData } from '../common-data/helper';
-import { commonDataConfig } from '../init-common-data-config/config';
+import { commonDataConfig, initCommonDataConfig } from '../init-common-data-config/config';
 import { Container, useCommonData } from '../common-data/container';
-import { CommonDataState } from '../common-data/types';
+import { CommonDataState, CommonDataPluginOptions } from '../common-data/types';
 import { getAsyncInitialData, matchRouterName } from './helper';
 
 // 检测路由的变更，根据路由变更自动刷新数据
@@ -16,7 +16,7 @@ function CommonDataCheck(props: { navigation: any }): null {
         const { action = {} } = event;
         const { type, routeName } = action;
         const names: string[] = [];
-        if (['Navigation/NAVIGATE','Navigation/JUMP_TO'].includes(type) && routeName) {
+        if (['Navigation/NAVIGATE', 'Navigation/JUMP_TO'].includes(type) && routeName) {
           commonDataConfig.items.forEach((config) => {
             const { name } = config;
             if (matchRouterName(config, routeName) && !Object.prototype.hasOwnProperty.call(commonData, name)) {
@@ -40,7 +40,7 @@ function Provider(props: { navigator: any; initialState: CommonDataState; childr
   const { navigator, initialState } = props;
   return (
     <Container initialState={initialState}>
-      <CommonDataCheck navigation={navigator && navigator._navigation} />
+      <CommonDataCheck navigation={navigator?._navigation} />
       {props.children}
     </Container>
   );
@@ -55,7 +55,9 @@ function Provider(props: { navigator: any; initialState: CommonDataState; childr
  * autoInitData为true的时候需要，调用 tumbler.trigger('useNavigator', navigator)注入navigator
  *  让commonData监听route变化
  */
-export default async function commonDataNativePlugin(initialData = {}, autoInitData: boolean = true) {
+export default async function commonDataNativePlugin(options: CommonDataPluginOptions, autoInitData = true) {
+  const { items, initialData = {} } = options;
+  initCommonDataConfig({ items });
   const staticData = await getInitialData();
   const asyncData = await getAsyncInitialData();
   const initialState = { ...staticData, ...initialData, ...asyncData };

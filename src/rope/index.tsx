@@ -127,7 +127,7 @@ export default class Rope {
   }
 
   // 异步数据初始化完成
-  private __handlePlugin<P, S>(plugins: Plugin<P, S>[]) {
+  public __handlePlugin<P, S>(plugins: Plugin<P, S>[]) {
     this.__plugins = [];
     plugins.forEach((plugin) => {
       const id = Rope.id++;
@@ -144,11 +144,11 @@ export default class Rope {
   }
 
   // 获取更新函数
-  private __setUpdater = (updater: Updater) => {
+  public __setUpdater = (updater: Updater) => {
     this.__updater = updater;
   };
 
-  getComponent() {
+  public getComponent() {
     return (
       <Core plugins={this.__plugins} setUpdater={this.__setUpdater}>
         {this.AppElement}

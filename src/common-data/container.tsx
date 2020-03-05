@@ -3,17 +3,17 @@ import { isPromise } from '@webtanzhi/utils';
 import { requestCommonData } from './helper';
 import { CommonData, CommonDataState, RefreshTarget } from './types';
 
-const defaultCommonData: CommonData = {} as CommonData;
+const defaultCommonData: CommonData = {} as any;
 
 export const commonDataContext = createContext(defaultCommonData);
 
 export class Container extends PureComponent<CommonDataState, CommonDataState> {
-  constructor(props: CommonDataState) {
+  public constructor(props: CommonDataState) {
     super(props);
     this.state = { ...(props.initialState || {}) };
   }
 
-  refresh = async (target: RefreshTarget, preload?: object) => {
+  public refresh = async (target: RefreshTarget, preload?: object) => {
     // 如果直接传入preload
     if (preload && typeof target === 'string') {
       const newData = { [target]: preload };
@@ -39,7 +39,7 @@ export class Container extends PureComponent<CommonDataState, CommonDataState> {
     this.setState(newData);
   };
 
-  render() {
+  public render() {
     const { children } = this.props;
     return (
       <commonDataContext.Provider value={{ ...this.state, refresh: this.refresh }}>
@@ -66,7 +66,7 @@ export function useCommonData() {
 
 export function injectCommonData<T extends CommonData>(CustomComponent: React.ComponentType<T>) {
   return function injectedCommonData(props: T) {
-    const commonData = useContext(commonDataContext);
-    return <CustomComponent {...commonData} {...props} />;
+    const common = useContext(commonDataContext);
+    return <CustomComponent common={common} {...props} />;
   };
 }

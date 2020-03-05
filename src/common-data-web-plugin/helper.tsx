@@ -5,15 +5,15 @@ import { requestCommonData } from '../common-data/helper';
 
 // 匹配路由名称
 export function matchPathname(config: CommonDataItemConfig, path?: string) {
-  const { excludeRoute, includeRoute } = config;
-  if (excludeRoute) {
-    if (!path || !matchPath(path, { path: excludeRoute, exact: true })) {
+  const { excludePath, includeRoute: includePath } = config;
+  if (excludePath) {
+    if (!path || !matchPath(path, { path: excludePath, exact: true })) {
       return true;
     }
     return false;
   }
-  if (includeRoute) {
-    if (path && matchPath(path, { path: includeRoute, exact: true })) {
+  if (includePath) {
+    if (path && matchPath(path, { path: includePath, exact: true })) {
       return true;
     }
   }
@@ -22,16 +22,16 @@ export function matchPathname(config: CommonDataItemConfig, path?: string) {
 
 /**
  * 获取所有初始异步数据
- * @param routerName native端的时候routerName为空
+ * @param path native端的时候routerName为空
  */
-export async function getAsyncInitialData(routerName?: string) {
+export async function getAsyncInitialData(path?: string) {
   const names: string[] = [];
   commonDataConfig.items.forEach((item) => {
     const { name, url } = item;
     if (!url) {
       return;
     }
-    if (matchPathname(item, routerName)) {
+    if (matchPathname(item, path)) {
       names.push(name);
     }
   });

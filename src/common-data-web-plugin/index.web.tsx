@@ -1,9 +1,9 @@
 import { History } from 'history';
 import React, { useEffect } from 'react';
 import { getInitialData } from '../common-data/helper';
-import { commonDataConfig } from '../init-common-data-config/config';
+import { commonDataConfig, initCommonDataConfig } from '../init-common-data-config/config';
 import { Container, useCommonData } from '../common-data/container';
-import { CommonDataState } from '../common-data/types';
+import { CommonDataState, CommonDataPluginOptions } from '../common-data/types';
 import { getAsyncInitialData, matchPathname } from './helper';
 
 // 检测路由的变更，根据路由变更自动刷新数据
@@ -48,7 +48,9 @@ function Provider(props: { history: History; initialState: CommonDataState; chil
  *
  * history设置之后，commonData监听path变化
  */
-export default async function commonDataWebPlugin(initialData = {}, history?: History) {
+export default async function commonDataWebPlugin(options: CommonDataPluginOptions, history?: History) {
+  const { items, initialData = {} } = options;
+  initCommonDataConfig({ items });
   const staticData = await getInitialData();
   const asyncData = await getAsyncInitialData();
   const initialState = { ...staticData, ...initialData, ...asyncData };

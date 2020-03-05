@@ -33,7 +33,7 @@ async function handleConfigRequest(config: CommonDataItemConfig, ctx?: any) {
   const { handleData, url, onError, name } = config;
   try {
     if (url) {
-      const data = await request(config.url, Object.assign({ quiet: true, isGlobal: true, ctx }, config.options));
+      const data = await request(config.url, {quiet: true, isGlobal: true, ctx, ...config.options});
       return { [name]: handleData ? handleData(data) : data };
     }
     return {};

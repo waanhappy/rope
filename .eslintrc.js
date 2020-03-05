@@ -1,10 +1,22 @@
 module.exports = {
-  parser: '@typescript-eslint/parser',
-  extends: ['plugin:@typescript-eslint/recommended', 'plugin:@typescript-eslint/recommended'],
-  plugins: ['@typescript-eslint', 'eslint-plugin-react'],
-  rules: {
-    '@typescript-eslint/no-explicit-any': 0,
-    '@typescript-eslint/explicit-function-return-type': 0,
-    '@typescript-eslint/no-inferrable-types': 0,
+  extends: ['alloy', 'alloy/react', 'alloy/typescript'],
+  env: {
+    browser: true,
+    node: true,
+    jest: true,
   },
+  globals: {},
+  rules: {
+    'no-return-await': 0,
+    '@typescript-eslint/explicit-member-accessibility': 0,
+  },
+  overrides: [
+    {
+      // enable the rule specifically for TypeScript files
+      files: ['*.ts', '*.tsx'],
+      rules: {
+        '@typescript-eslint/explicit-member-accessibility': ['error'],
+      },
+    },
+  ],
 };

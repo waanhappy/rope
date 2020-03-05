@@ -1,6 +1,7 @@
+import { CommonDataDefaultConfig } from './../init-common-data-config/config';
 import { RequestOptions } from '@webtanzhi/utils/es/request/types';
 
-export type CommonDataItemConfig = {
+export interface CommonDataItemConfig {
   name: string;
   url?: string;
   options?: RequestOptions;
@@ -30,11 +31,11 @@ export type CommonDataItemConfig = {
   includePath?: string[];
   excludeRoute?: string[];
   includeRoute?: string[];
-};
+}
 
 export type RefreshTarget = string[] | string | Promise<object>;
 
-export type CommonData = {
+export interface CommonData {
   [key: string]: any;
   /**
    * 刷新公共数据
@@ -50,6 +51,11 @@ export type CommonData = {
    *        promise的返回结果会被展开到commonData中
    */
   refresh: (target?: RefreshTarget, preload?: object) => Promise<void>;
-};
+}
+
+export interface CommonDataPluginOptions {
+  items: CommonDataDefaultConfig['items'];
+  initialData?: any;
+}
 
 export type CommonDataState = Omit<CommonData, 'refresh'>;

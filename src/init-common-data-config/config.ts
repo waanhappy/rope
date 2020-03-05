@@ -1,8 +1,8 @@
 import { CommonDataItemConfig } from '../common-data/types';
 
-export type CommonDataDefaultConfig = {
+export interface CommonDataDefaultConfig {
   items: CommonDataItemConfig[];
-};
+}
 
 export const commonDataConfig: CommonDataDefaultConfig = {
   items: [],
